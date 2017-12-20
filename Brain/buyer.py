@@ -13,42 +13,25 @@ class Buyer():
         coins = session.credits
         for target in targets:        # target is assetId
             print(target)
-            if coins < 1000:
+            if coins < 150:
                 print('out of coins!')
                 return
-            iteminfo = Scout.pricing(target)
-            if iteminfo['low'] < coins:
-                auction = session.searchAuctions('player', assetId=int(target), max_buy=Scout.roundup(iteminfo['low']*0.95))
-                print (iteminfo['low']*0.95)
-                print (Scout.roundup(iteminfo['low']*0.95))
-                print(len(auction))
-                lsf = None
-                for player in auction:
-                    buynow = int(player['buyNowPrice'])
-                    if buynow < iteminfo['avg'] and buynow < coins: # accounting for EA tax
-                        if lsf is None or buynow < lsf['buyNowPrice']:
-                            lsf = player
-                if lsf is not None:
-                    session.bid(int(lsf['tradeId']), int(lsf['buyNowPrice']))
-                    print('I just bought a player for: ' + str(lsf['buyNowPrice']))
-                    print('Its average price on the market is: ' + str(iteminfo['avg']))
-                    return
-                else:
-                    print('no players found here')
+            else:
+                Buyer.buyone(target, session)
 
     @classmethod
     def buyone(cls, target, session):
         iteminfo = Scout.pricing(target)
         if iteminfo['low'] < session.credits:
-            auction = session.searchAuctions('player', assetId=int(target), max_buy = 20000)
+            auction = session.searchAuctions('player', assetId=int(target), max_buy = Scout.roundup(iteminfo['low'] * 0.95))
             lsf = None
             for player in auction:
                 buynow = int(player['buyNowPrice'])
-                if buynow < iteminfo['avg'] and buynow < session.credits:  # accounting for EA tax
+                if buynow < iteminfo['avg'] and buynow < session.credits:
                     if lsf is None or buynow < lsf['buyNowPrice']:
                         lsf = player
             if lsf is not None:
-                session.bid(int(lsf['tradeId']), int(iteminfo['low']+200))
+                session.bid(int(lsf['tradeId']), lsf['buyNowPrice'])
                 print('I just bought a player for: ' + str(lsf['buyNowPrice']))
                 print('Its average price on the market is: ' + str(iteminfo['avg']))
                 return
