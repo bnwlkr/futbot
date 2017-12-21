@@ -21,7 +21,7 @@ class Buyer():
 
     @classmethod
     def buyone(cls, target, session):
-        iteminfo = Scout.pricing(target)
+        iteminfo = Scout.futheadpricing(target)
         if iteminfo['low'] < session.credits:
             auction = session.searchAuctions('player', assetId=int(target), max_buy = Scout.roundup(iteminfo['low'] * 0.95))
             lsf = None

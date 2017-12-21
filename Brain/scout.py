@@ -25,7 +25,7 @@ class Scout:
         return finalList
 
     @classmethod
-    def pricing(cls, assetId):
+    def futheadpricing(cls, assetId):
         http = urllib3.PoolManager()
         r = http.request('GET', "http://www.futhead.com/prices/api/?year=18&id=" + str(assetId))
         data = json.loads(r.data)
@@ -33,6 +33,15 @@ class Scout:
         lowprice = int(data[str(assetId)]['ps'])
         return {'avg': avgprice, 'low': lowprice}
 
+
+    @classmethod
+    def marketpricing(cls, session, assetId):
+        players = session.search('player', assetId=assetId)
+        lowestprice = None
+        for player in players:
+            if (lowestprice is None or player['buyNowPrice'] < lowestprice):
+                lowestprice = player['buyNowPrice']
+        return lowestprice
 
 # this scout happens to be carrying a cheeky calculator lol
     @classmethod

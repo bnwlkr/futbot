@@ -1,9 +1,8 @@
 from scout import Scout
-
+import fut
 
 # the lister transports any unassigned items to the tradepile, and then lists players
 # at their average prices on the market, and consumables at pre-determined prices.
-
 
 class Lister:  ##TODO: List items at the right price
     @classmethod
@@ -14,13 +13,16 @@ class Lister:  ##TODO: List items at the right price
             if item['tradeState'] is None:
                 if item['itemType'] == 'player':
                     Lister.listPlayer(item, session)
-                elif item['itemType'] == 'fitness':
-                    session.sell(item['id'], 550, 650)
                     print('item listed!')
-                elif item['itemType'] == 'kit':
+                elif item['itemType'] == 'contract' or item['itemType'] == 'health':
+                    session.sell(item['id'], 150, 200)
+                elif item['itemType'] == 'kit' or item['itemType'] == 'ball':
                     session.quickSell(item['id'])
                 else:
-                    session.sell(item['id'], 150, 200)
+                    print ("What should I list this item at?")
+                    print item
+                    userinput = int(input("Start price: "))
+                    session.sell(item['id'], userinput, userinput + 100)
                     print('item listed!')
 
 
@@ -30,14 +32,22 @@ class Lister:  ##TODO: List items at the right price
 
     @classmethod
     def listPlayer(cls, player, session):
-        pricing = Scout.pricing(player['assetId'])
-        if player['lastSalePrice'] == 0: # this player was packed
-            print "packed player, rating: " + str(player['rating']) + ", attempted sale at: " +  str(pricing['low'])
-            if pricing['low'] == 10000:
-                session.sell(player['id'], 150, 200)
-            else:
-                session.sell(player['id'], pricing['low'], pricing['low'] + 50)
-            print('player listed!')
+        try:
+            price = Scout.marketpricing(session, player['assetId'])
+            if player['lastSalePrice'] == 0: # this player was packed
+                if price == 10000:
+                    session.sell(player['id'], 150, 200)
+                else:
+                    listprice = max(player['marketDataMinPrice'], price - 100)
+                    session.sell(player['id'], listprice, listprice + 100)
+                print('player listed!')
+        except fut.PermissionDenied:
+            print player
+        except fut.UnknownError:
+            print("I couldn't list this player. You figure it out, conscious human.")
+            print(player)
+            print "price: " + str(price)
+
 
 
             #boughtfor = int(player['lastSalePrice'])  #this player was purchased by the buyer
