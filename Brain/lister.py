@@ -11,25 +11,14 @@ class Lister:  ##TODO: List items at the right price
             for item in session.unassigned():
                 session.sendToTradepile(item['id'])
             for item in session.tradepile():
+                if item['tradeState'] == 'expired':       #relist expired players
+                    Lister.relistExpired(session, item)
                 if item['tradeState'] is None:
                     if item['itemType'] == 'player':
-                        Lister.listPlayer(item, session)
+                        Lister.listPlayer(session, item)
                         print('item listed!')
-                    elif item['itemType'] == 'contract' or item['itemType'] == 'health' or item['itemType'] == 'manager':
-                        session.sell(item['id'], 150, 200)
-                    elif item['itemType'] == 'training':
-                        if item['rareflag'] == 0:
-                            session.sell(item['id'], 150, 200)
-                        else:
-                            session.sell(item['id'], 300, 400)
-                    elif item['itemType'] == 'kit' or item['itemType'] == 'ball' or item['itemType'] == 'gkCoach':
-                        session.quickSell(item['id'])
                     else:
-                        print ("What should I list this item at?")
-                        print item
-                        userinput = int(input("Start price: "))
-                        session.sell(item['id'], userinput, userinput + 100)
-                        print('item listed!')
+                        Lister.listItem(session, item)
         except fut.PermissionDenied:
             print item
 
@@ -44,7 +33,7 @@ class Lister:  ##TODO: List items at the right price
         session.relist()
 
     @classmethod
-    def listPlayer(cls, player, session):
+    def listPlayer(cls, session, player):
             price = Scout.marketpricing(session, player['assetId'])
             if player['lastSalePrice'] == 0: # this player was packed
                 if price == 10000:
@@ -54,6 +43,25 @@ class Lister:  ##TODO: List items at the right price
                     listprice = max(player['marketDataMinPrice'], price - 100)
                     session.sell(player['id'], listprice, listprice + 100)
                 print('player listed!')
+
+    @classmethod
+    def listItem(cls, session, item):
+        if item['itemType'] == 'contract' or item['itemType'] == 'health' or item['itemType'] == 'manager':
+            session.sell(item['id'], 150, 200)
+        elif item['itemType'] == 'training':
+            if item['rareflag'] == 0:
+                 session.sell(item['id'], 150, 200)
+            else:
+                 session.sell(item['id'], 300, 400)
+        elif item['itemType'] == 'kit' or item['itemType'] == 'ball' or item['itemType'] == 'gkCoach':
+            session.quickSell(item['id'])
+        print ('item listed')
+
+
+    @classmethod
+    def relistExpired(cls, session, item):
+        startingBid = max(item['startingBid']-50, item['marketDataMinPrice'])
+        session.sell(item['id'], startingBid, startingBid + 100)
 
 
 

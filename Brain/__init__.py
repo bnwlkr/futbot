@@ -4,7 +4,6 @@ from scout import Scout
 from packer import Packer
 
 def list(session):
-    Lister.relist(session)
     Lister.list(session)
 
 def buyplayer(session):
