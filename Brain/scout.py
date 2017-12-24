@@ -43,6 +43,16 @@ class Scout:
                 lowestprice = player['buyNowPrice']
         return lowestprice
 
+    @classmethod
+    def itemPricing(cls, session, resourceID):
+        items = session.search('development', defId=resourceID)
+        lowestprice = None
+        for item in items:
+            if (lowestprice is None or item['buyNowPrice'] < lowestprice):
+                lowestprice = item['buyNowPrice']
+        return lowestprice
+
+
 # this scout happens to be carrying a cheeky calculator lol
     @classmethod
     def roundup(cls, x):

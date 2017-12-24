@@ -8,6 +8,7 @@ class Packer:
         for pack in packs:
             if pack['coins'] == price:
                 session.buyPack(pack['id'])
+                print ('I just bought a pack!')
 
 
 
