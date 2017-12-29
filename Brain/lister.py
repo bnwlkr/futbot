@@ -39,6 +39,11 @@ class Lister:  ##TODO: List items at the right price
                     listprice = max(player['marketDataMinPrice'], price-100)
                     session.sell(player['id'], listprice, listprice + (100 if price >= 1000 else 50))
                 print('player listed!')
+            else:
+                boughtfor = int(player['lastSalePrice'])  #this player was purchased by the buyer
+                breakeven = Scout.roundup(boughtfor / 0.95)  # accounting for EA tax
+                session.sell(player['id'], breakeven, Scout.roundup(breakeven * 1.1))
+                print('bought player listed!')
 
     @classmethod
     def listItem(cls, session, item):
@@ -55,6 +60,9 @@ class Lister:  ##TODO: List items at the right price
 
     @classmethod
     def relistExpired(cls, session, item):
-        startingBid = max(item['startingBid']-50, item['marketDataMinPrice'])
-        session.sell(item['id'], startingBid, startingBid + (100 if startingBid >= 1000 else 50))
-        print('expired item relisted')
+        if item['lastSalePrice'] == 0:
+            startingBid = max(item['startingBid']-(100 if item['startingBid'] >= 1000 else 50), item['marketDataMinPrice'])
+            session.sell(item['id'], startingBid, startingBid+(100 if startingBid >= 1000 else 50))
+            print('expired item relisted')
+        else:
+            session.sell(item['id'], item[''])

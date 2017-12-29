@@ -11,7 +11,7 @@ class Buyer():
     def buy(cls, session, targets):
         http = urllib3.PoolManager()
         coins = session.credits
-        for target in targets:        # target is assetId
+        for target in targets:
             print(target)
             if coins < 150:
                 print('out of coins!')
