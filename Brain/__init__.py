@@ -1,7 +1,7 @@
-from buyer import Buyer
 from lister import Lister
 from scout import Scout
 from packer import Packer
+from buyer import Buyer
 
 def list(session):
     Lister.list(session)

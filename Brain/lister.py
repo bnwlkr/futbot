@@ -42,8 +42,9 @@ class Lister:  ##TODO: List items at the right price
 
     @classmethod
     def listItem(cls, session, item):
-        if item['itemType'] == 'kit' or item['itemType'] == 'ball' or item['itemType'] == 'gkCoach' or item['itemType'] == 'fitnessCoach':
+        if item['itemType'] == 'kit' or item['itemType'] == 'ball' or item['itemType'] == 'gkCoach' or item['itemType'] == 'fitnessCoach' or item['itemType'] == 'physio' or (item['itemType'] == 'manager' and item['rareflag'] != 1) or item['itemType'] == 'badge' or item['itemType'] == 'stadium':
             session.quickSell(item['id'])
+            print ('item quicksold')
         else:
             price = Scout.itemPricing(session, item['resourceId'])
             if price is None:
