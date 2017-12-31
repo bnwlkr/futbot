@@ -24,6 +24,7 @@ class Buyer():
         iteminfo = Scout.futheadpricing(target)
         if iteminfo['low'] < session.credits:
             auction = session.searchAuctions('player', assetId=int(target), max_buy = Scout.roundup(iteminfo['low'] * 0.95))
+            print (len(auction))
             lsf = None
             for player in auction:
                 buynow = int(player['buyNowPrice'])
