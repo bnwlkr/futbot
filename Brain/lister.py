@@ -65,4 +65,4 @@ class Lister:  ##TODO: List items at the right price
             session.sell(item['id'], startingBid, startingBid+(100 if startingBid >= 1000 else 50))
             print('expired item relisted')
         else:
-            session.sell(item['id'], item[''])
+            session.sell(item['id'], item['startingBid'], item['buyNowPrice'])
