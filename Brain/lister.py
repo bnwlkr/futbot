@@ -1,28 +1,29 @@
 from scout import Scout
-import fut
+from fut.exceptions import PermissionDenied
+from fut.exceptions import UnknownError
 
 # the lister transports any unassigned items to the tradepile, and then lists players
 # at their average prices on the market, and consumables at pre-determined prices.
 
-class Lister:  ##TODO: List items at the right price
+class Lister:
     @classmethod
     def list(cls, session):
-        try:
             for item in session.unassigned():
                 session.sendToTradepile(item['id'])
             for item in session.tradepile():
-                if item['tradeState'] == 'expired':       #relist expired players
-                    Lister.relistExpired(session, item)
-                if item['tradeState'] is None:
-                    if item['itemType'] == 'player':
-                        Lister.listPlayer(session, item)
-                    else:
-                        Lister.listItem(session, item)
-        except fut.PermissionDenied:
-            print item
-        except fut.UnknownError:
-            print("I couldn't list this item. You figure it out, conscious human.")
-            print(item)
+                try:
+                    if item['tradeState'] == 'expired':
+                        Lister.relistExpired(session, item)
+                    if item['tradeState'] is None:
+                        if item['itemType'] == 'player':
+                            Lister.listPlayer(session, item)
+                        else:
+                            Lister.listItem(session, item)
+                except PermissionDenied:
+                    print item
+                except UnknownError:
+                    print("I couldn't list this item. You figure it out, conscious human.")
+                    print(item)
 
 
     @classmethod

@@ -23,8 +23,11 @@ class Buyer():
     def buyone(cls, target, session):
         iteminfo = Scout.futheadpricing(target)
         if iteminfo['low'] < session.credits:
-            auction = session.searchAuctions('player', assetId=int(target), max_buy = Scout.roundup(iteminfo['low'] * 0.95))
-            print (len(auction))
+            searchPrice = Scout.roundup(iteminfo['low'])
+            auction = session.searchAuctions('player', assetId=int(target), max_buy = searchPrice)
+            while (len(auction) == 36):
+                searchPrice -= 100
+                auction = session.searchAuctions('player', assetId=int(target), max_buy = Scout.roundup(searchPrice))
             lsf = None
             for player in auction:
                 buynow = int(player['buyNowPrice'])
