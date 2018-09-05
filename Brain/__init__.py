@@ -4,7 +4,7 @@ from scout import Scout
 from packer import Packer
 from buyer import Buyer
 
-session = fut.Core('benfw0@gmail.com', 'Thub48sten82!', 'egham', 'ps4')
+session = fut.Core(os.environ['FUT_LOGIN'], os.environ['FUT_PASS'], 'egham', 'ps4')
 
 def list():
     Lister.list(session)
