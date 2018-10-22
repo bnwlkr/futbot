@@ -27,6 +27,20 @@ class ViewController: UIViewController, WebSocketDelegate {
         activity.isHidden = true
     }
     
+    override func viewDidLayoutSubviews() {
+       let timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: {_ in
+            let chooser = (Int.random(in: 0...2))
+            if chooser  == 0 {
+                self.log.text = self.log.text + "player listed" + "\n"
+            } else if chooser == 1 {
+                self.log.text = self.log.text + "item listed" + "\n"
+            } else {
+                self.log.text = self.log.text + "item quicksold" + "\n"
+        }
+        
+       })
+    }
+    
     
     func websocketDidConnect(socket: WebSocketClient) {
         activity.isHidden = false
