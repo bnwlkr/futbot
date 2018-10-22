@@ -1,4 +1,4 @@
-# futbot
+# futbot ⚽
 <img src="preview/fifa_logo.png" width=200/>
 
 just add your login details to your environment, and then run (perhaps in a crontab)
